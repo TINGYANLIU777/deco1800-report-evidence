@@ -1,0 +1,105 @@
+Local technical rerun, 29 October 2026 (Australia/Brisbane).
+Command: node --test --test-reporter=tap tests/social-model.test.cjs tests/social-validation.test.cjs
+Node: v24.14.1
+Exit code: 0
+
+TAP version 13
+# Subtest: every rule has a reason, a weight, a known place to look and a level from 1 to 5
+ok 1 - every rule has a reason, a weight, a known place to look and a level from 1 to 5
+  ---
+  duration_ms: 0.7731
+  type: 'test'
+  ...
+# Subtest: the five levels are reachable from a clear title
+ok 2 - the five levels are reachable from a clear title
+  ---
+  duration_ms: 2.6276
+  type: 'test'
+  ...
+# Subtest: official Council categories outweigh loose wording in the description (the old "Zumba Gold" bug)
+ok 3 - official Council categories outweigh loose wording in the description (the old "Zumba Gold" bug)
+  ---
+  duration_ms: 0.2033
+  type: 'test'
+  ...
+# Subtest: library categories map to the level their activity needs
+ok 4 - library categories map to the level their activity needs
+  ---
+  duration_ms: 0.208
+  type: 'test'
+  ...
+# Subtest: structured categories and title agree: more than one place gives "good evidence"
+ok 5 - structured categories and title agree: more than one place gives "good evidence"
+  ---
+  duration_ms: 0.1934
+  type: 'test'
+  ...
+# Subtest: a tie goes to the lower level and mixed signals are a guess shown as L2
+ok 6 - a tie goes to the lower level and mixed signals are a guess shown as L2
+  ---
+  duration_ms: 0.108
+  type: 'test'
+  ...
+# Subtest: weak evidence is never turned into a strong claim: a guess is always L2
+ok 7 - weak evidence is never turned into a strong claim: a guess is always L2
+  ---
+  duration_ms: 0.5781
+  type: 'test'
+  ...
+# Subtest: a venue name is not a social group: "Bowls Club" does not make an activity social
+ok 8 - a venue name is not a social group: "Bowls Club" does not make an activity social
+  ---
+  duration_ms: 0.1515
+  type: 'test'
+  ...
+# Subtest: the answer explains itself and is repeatable
+ok 9 - the answer explains itself and is repeatable
+  ---
+  duration_ms: 0.2553
+  type: 'test'
+  ...
+# Subtest: HTML in a description is ignored and text is matched case-insensitively
+ok 10 - HTML in a description is ignored and text is matched case-insensitively
+  ---
+  duration_ms: 0.2036
+  type: 'test'
+  ...
+# Subtest: weighted kappa is 1 for identical ratings, near 0 for unrelated ones, and falls as disagreement grows
+ok 11 - weighted kappa is 1 for identical ratings, near 0 for unrelated ones, and falls as disagreement grows
+  ---
+  duration_ms: 0.6741
+  type: 'test'
+  ...
+# Subtest: agreement counts exact and within-one matches
+ok 12 - agreement counts exact and within-one matches
+  ---
+  duration_ms: 0.1362
+  type: 'test'
+  ...
+# Subtest: the middle of several raters is a median that does not favour one person
+ok 13 - the middle of several raters is a median that does not favour one person
+  ---
+  duration_ms: 0.1019
+  type: 'test'
+  ...
+# Subtest: csv reader handles quotes, commas and blank lines
+ok 14 - csv reader handles quotes, commas and blank lines
+  ---
+  duration_ms: 0.7465
+  type: 'test'
+  ...
+# Subtest: the report says when the model disagrees badly and when people disagree among themselves
+ok 15 - the report says when the model disagrees badly and when people disagree among themselves
+  ---
+  duration_ms: 0.6259
+  type: 'test'
+  ...
+1..15
+# tests 15
+# suites 0
+# pass 15
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 141.7792

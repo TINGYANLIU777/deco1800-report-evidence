@@ -1,0 +1,74 @@
+Source: release-review/final-release-20261029/social-model.js
+SHA-256: a078cd754bffc5c7d35fe3103c6027aab0da109d9abfadf48053275d9ac97fd0
+
+39:  const FIELDS={
+40:   libraryType:{label:'Library event type',weight:3},
+41:   activityType:{label:'Activity type',weight:3},
+42:   title:{label:'Title',weight:3},
+43:   eventTag:{label:'Event category',weight:2},
+44:   description:{label:'Description',weight:1}
+45:  };
+46:  const LEVELS={1:'Independent',2:'Optional hello',3:'Guided together',4:'Social exchange',5:'Sustained interaction'};
+
+84:   // ---- Title (what the organiser calls it) ----
+85:   ['title',1,/self[- ]guided|audio guide|independent visit|\bexhibition\b|\bgallery\b|\binstallation\b|\bon display\b|open daily|\blap swim|free swim/,'The title says you can go at your own pace or just look around'],
+86:   ['title',2,/\btours?\b|concert|performance|\bshow\b|screening|\bfilm\b|\btalk\b|lecture|seminar|presentation|\bpanel\b|\bmarket\b|\bfestival\b|\bexpo\b|yoga|pilates|tai chi|qigong|meditation|mindfulness|stretch|\baqua\b|chair|gentle/,'The title names a tour, show, talk or led class where talking is optional'],
+87:   ['title',3,/\bclass(?:es)?\b|workshop|lesson|\bcourse\b|craft|\bcreate\b|making|story ?time|rhymes?|sing(?:ing|along)?|dance|dancing|zumba|salsa|learn to|hands[- ]on|kayak|paddle|orienteering|skills|\bsoccer\b|football|basketball|netball|cricket|tennis|volleyball|rugby|kids sports?|\bpottery\b/,'The title names a class, workshop or group activity done together'],
+88:   ['title',4,/conversation|\bchat\b|\bsocial\b|meet[- ]?up|meet and greet|(?:book|chess|walking|running|craft|knit(?:ting)?|crochet|garden(?:ing)?|photography|film|games?|coding|lego|writers?|readers?|conversation|coffee|social|community|youth|homework) club|networking|community lunch|morning tea|supper|volunteer|working bee|support group|\bpeer\b|discussion|\bcircle\b|playgroup|mums?\b|parents? group|bingo|trivia|game night|breakfast with/,'The title says talking or working with others is the point'],
+89:   ['title',4,/greeters?/,'A volunteer local walks with you and chats, so conversation is the activity'],
+90:   ['title',5,/tournament|competition|competitive|\bleague\b|\bmatch\b|debate|improv|speed dating|scrimmage|grand final|round robin/,'The title says people compete or interact continuously'],
+91: 
+92:   // ---- Description (free text, low weight) ----
+93:   ['description',1,/self[- ]guided|at your own pace|independent|audio guide|go at your own pace/,'The description says you can go at your own pace'],
+94:   ['description',2,/\blisten\b|\bwatch\b|enjoy the (?:music|performance|show)|\baudience\b/,'The description says you listen or watch'],
+95:   ['description',3,/led by|instructor|facilitator|\bhands[- ]on\b|join in|\bsing\b|learn (?:how|to)|taught by/,'The description says a leader guides the group'],
+96:   ['description',4,/meet other|make (?:new )?friends|\bchat\b|conversation|practi[sc]e your english|discussion|connect with (?:other|local)/,'The description says meeting or talking with others is the point'],
+97:   ['description',5,/\bcompete\b|competition|tournament|\bteams?\b/,'The description says people compete or play in teams']
+98:  ].map(([field,level,pattern,because,weight],i)=>({id:'S'+String(i+1).padStart(2,'0'),field,level,pattern,because,weight:weight??FIELDS[field].weight}));
+99: 
+100:  const clean=text=>String(text||'').toLowerCase().replace(/[’‘]/g,"'").replace(/&amp;/g,'&').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+101:  const list=v=>[].concat(v||[]).map(String);
+102:  function fieldTexts(e){
+103:   const tags=[...list(e.primaryeventtype),...list(e.event_type)].filter(t=>!/^(?:free|featured|school holidays)$/i.test(t));
+104:   return{
+105:    libraryType:clean(list(e.libraryeventtypes).join(' | ')),
+106:    activityType:clean(list(e.activitytype).join(' | ')),
+107:    title:clean(e.subject),
+108:    eventTag:clean([...new Set(tags)].join(' | ')),
+109:    description:clean(e.description).slice(0,1500)
+110:   };
+
+113:  // Returns {level, confidence:'good'|'fair'|'guess', known, evidence, signals, reason}.
+114:  function estimate(e){
+115:   const texts=fieldTexts(e),best={};            // best[level][field] = strongest matching signal
+116:   for(const s of SIGNALS){
+117:    const m=texts[s.field].match(s.pattern);if(!m)continue;
+118:    const slot=(best[s.level]=best[s.level]||{});
+119:    if(!slot[s.field]||s.weight>slot[s.field].weight)slot[s.field]={...s,matched:m[0].trim()};
+120:   }
+121:   const evidence={1:0,2:0,3:0,4:0,5:0};
+122:   for(const level of Object.keys(best))evidence[level]=Object.values(best[level]).reduce((n,s)=>n+s.weight,0);
+123:   const ranked=[1,2,3,4,5].sort((a,b)=>evidence[b]-evidence[a]||a-b);   // ties go to the lower level
+124:   const top=ranked[0],lead=evidence[top]-evidence[ranked[1]];
+125:   if(!evidence[top]){
+126:    return{level:2,leaning:null,confidence:'guess',known:false,evidence,signals:[],mixed:false,
+127:     reason:'The listing does not say what kind of activity this is, so we assume other people are around but talking is optional (L2).'};
+128:   }
+129:   const signals=Object.values(best[top]).sort((a,b)=>b.weight-a.weight);
+130:   const fields=signals.length,mixed=evidence[ranked[1]]>=2.5&&lead<1;
+131:   let confidence='guess';
+132:   if(!mixed){
+133:    if(fields>=2&&evidence[top]>=5&&lead>=2)confidence='good';
+134:    else if(evidence[top]>=2&&lead>=1)confidence='fair';
+135:   }
+136:   const shown=signals.map(s=>({id:s.id,field:s.field,fieldLabel:FIELDS[s.field].label,matched:s.matched,level:s.level,weight:s.weight,because:s.because}));
+137:   const reason=signals.slice(0,2).map(s=>`${FIELDS[s.field].label} “${s.matched}”: ${s.because.charAt(0).toLowerCase()+s.because.slice(1)}`).join('. ')+'.';
+138:   // A guess is always shown as L2, the neutral middle, so weak evidence never claims "independent" or "very social".
+139:   if(confidence==='guess')return{level:2,leaning:top,confidence,known:false,evidence,mixed,signals:shown,
+140:    reason:(mixed?'The signals in the listing point different ways, so we show the neutral L2. ':'There is only weak evidence in the listing, so we show the neutral L2. ')+reason};
+141:   return{level:top,leaning:top,confidence,known:true,evidence,mixed:false,reason,signals:shown};
+142:  }
+143: 
+144:  const api={FIELDS,LEVELS,SIGNALS,estimate,fieldTexts};
+145:  root.SocialModel=api;
+146:  if(typeof module!=='undefined'&&module.exports)module.exports=api;

@@ -1,0 +1,15 @@
+Source: version-comparison/v13/app.js
+SHA-256: cca151ad7a99a45df09674276aafc826c1d36ad13921f21f96bcff16b34ab068
+
+76: function socialEstimate(e){
+77:  const text=[e.subject,e.description,...(e.event_type||[]),...(e.activitytype||[])].join(' ').toLowerCase();
+78:  const rules=[
+79:   [1,/self[- ]guided|at your own pace|independent visit/,'The listing describes an independent or self-guided visit.'],
+80:   [5,/competitive team|team tournament|debate competition|improvisation|improv workshop/,'The format suggests sustained, spontaneous interaction with others.'],
+81:   [4,/networking|meet[- ]?up|conversation group|book club|social dance|team game/,'The format centres on conversation or shared social activity.'],
+82:   [2,/guided tour|concert|exhibition|market|festival|storytime|story time|library|garden|walk|nature|yoga|mindfulness/,'The format often allows observation or optional conversation.'],
+83:   [3,/workshop|class|volunteer|danc|group|soccer|football|basketball|team sport|sports|zumba|dragon boat/,'The format suggests guided participation with some interaction.']
+84:  ];
+85:  for(const [level,pattern,reason] of rules)if(pattern.test(text))return{level,reason,known:true};
+86:  return{level:2,reason:'Not enough format information. L2 is a provisional estimate; check with the organiser.',known:false};
+87: }

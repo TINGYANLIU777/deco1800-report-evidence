@@ -1,0 +1,105 @@
+{
+  "evidenceType": "Synthetic regression fixtures; not participant feedback or real Council records",
+  "cases": [
+    {
+      "input": {
+        "id": "Z1",
+        "subject": "Zumba Gold®",
+        "activitytype": [
+          "Dancing"
+        ],
+        "description": "Work at your own pace in a friendly class."
+      },
+      "v13": {
+        "level": 1,
+        "reason": "The listing describes an independent or self-guided visit.",
+        "known": true
+      },
+      "final": {
+        "level": 3,
+        "leaning": 3,
+        "confidence": "good",
+        "known": true,
+        "evidence": {
+          "1": 1,
+          "2": 0,
+          "3": 5.5,
+          "4": 0,
+          "5": 0
+        },
+        "mixed": false,
+        "reason": "Title “zumba”: the title names a class, workshop or group activity done together. Activity type “dancing”: dancing together in a group, where mixing and partner work are common.",
+        "signals": [
+          {
+            "id": "S31",
+            "field": "title",
+            "fieldLabel": "Title",
+            "matched": "zumba",
+            "level": 3,
+            "weight": 3,
+            "because": "The title names a class, workshop or group activity done together"
+          },
+          {
+            "id": "S10",
+            "field": "activityType",
+            "fieldLabel": "Activity type",
+            "matched": "dancing",
+            "level": 3,
+            "weight": 2.5,
+            "because": "Dancing together in a group, where mixing and partner work are common"
+          }
+        ]
+      }
+    },
+    {
+      "input": {
+        "id": "Z2",
+        "subject": "Zumba Gold®",
+        "activitytype": [
+          "Dancing"
+        ],
+        "description": "A fun low-impact class."
+      },
+      "v13": {
+        "level": 3,
+        "reason": "The format suggests guided participation with some interaction.",
+        "known": true
+      },
+      "final": {
+        "level": 3,
+        "leaning": 3,
+        "confidence": "good",
+        "known": true,
+        "evidence": {
+          "1": 0,
+          "2": 0,
+          "3": 5.5,
+          "4": 0,
+          "5": 0
+        },
+        "mixed": false,
+        "reason": "Title “zumba”: the title names a class, workshop or group activity done together. Activity type “dancing”: dancing together in a group, where mixing and partner work are common.",
+        "signals": [
+          {
+            "id": "S31",
+            "field": "title",
+            "fieldLabel": "Title",
+            "matched": "zumba",
+            "level": 3,
+            "weight": 3,
+            "because": "The title names a class, workshop or group activity done together"
+          },
+          {
+            "id": "S10",
+            "field": "activityType",
+            "fieldLabel": "Activity type",
+            "matched": "dancing",
+            "level": 3,
+            "weight": 2.5,
+            "because": "Dancing together in a group, where mixing and partner work are common"
+          }
+        ]
+      }
+    }
+  ]
+}
