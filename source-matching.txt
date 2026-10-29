@@ -1,0 +1,18 @@
+E09 — Treatment of unknown social-level evidence
+Source: Team JETZ, Out & About Brisbane, discovery.js
+Inspected commit: eab476f393123480baed57cbe402c3fcd042b066
+Source repository: 3064766203-arch/deco1800-jetz (private)
+Original source lines 111–120 follow; no access to the private repository is needed to read this excerpt.
+
+Interpretation: estimate.known determines whether social pace is assessed. Unknown social evidence contributes neither earned weight nor assessed weight to the internal preference score. It is not treated as a confirmed mismatch. This excerpt concerns ranking, not the separate maximum-social-level filter.
+
+111:  if(a.social){const estimate=socialEstimate(e);add('Your social pace',15,e.social<=socialLevel(),estimate.known,`Your maximum: L${socialLevel()} · Estimated activity: L${e.social}. ${estimate.known?'Inferred from listing format; not independently verified.':'Not enough information to estimate reliably.'}`,true)}
+112:  if(a.suburb&&!/^Anywhere/.test(a.suburb)){const km=hook('eventDistance',e),measured=typeof km==='number',same=eventSuburb(e)===a.suburb;add('Your home suburb',5,same||(measured&&km<=5),same||measured,measured?`${km<1?'Under 1':km.toFixed(1)} km from ${a.suburb} in a straight line; near-home threshold: 5 km (not driving distance)`:`Your suburb: ${a.suburb} · Listed: ${eventSuburb(e)||'Not identified'}. ${same?'Same suburb':'Distance unavailable; not counted as a confirmed mismatch'}`)}
+113:  if(a.budget&&a.budget!=='any')add('Your preferred budget',5,costMatches(e,a.budget),costInfo(e).price!==null||a.budget==='unknown',`Your choice: ${BUDGET_OPTIONS.find(x=>x[0]===a.budget)?.[1]||a.budget} · Listed: ${e.cost||'Not supplied'}. Uses listed ticket prices; your family total may differ.`);
+114:  if(a.setting&&a.setting!=='any')add('Your preferred setting',5,eventSetting(e)===a.setting,eventSetting(e)!=='unknown',`Your choice: ${a.setting} · Estimated setting: ${eventSetting(e)} (inferred from venue/listing, not verified)`,true);
+115:  if(a.time&&a.time!=='any'){const t=timeEvidence(e,a.time);add('Your time of day',5,t.match,t.known,t.note)}
+116:  const total=parts.reduce((n,p)=>n+p.weight,0),known=parts.filter(p=>p.known),confirmed=known.filter(p=>p.match).length,unknown=parts.length-known.length;
+117:  // Unconfirmed facts are excluded from the ranking denominator, while coverage is reported separately.
+118:  const assessedWeight=known.reduce((n,p)=>n+p.weight,0),score=eligibility.status==='miss'?0:assessedWeight?Math.round(known.reduce((n,p)=>n+(p.match?p.weight:0),0)/assessedWeight*100):null;
+119:  const result={score,parts,total,confirmed,assessed:known.length,unknown,eligibility};state.matchCache?.set(e,result);return result;
+120: }
